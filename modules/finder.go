@@ -6,23 +6,27 @@ import (
 	"os"
 )
 
-func Find(path string) {
+type File struct {
+	Filename string
+	HashMd5  []uint8
+	HashSha1 []uint8
+}
+
+func Find(path string) []*File {
+	var fileHashes []*File
 	files, _ := ioutil.ReadDir(path)
 	for _, f := range files {
-
 		if !(f.IsDir()) {
-			fmt.Println(f.Name())
-			fmt.Println(path + fmt.Sprintf("%c", os.PathSeparator) + f.Name())
+			hMd5 := CalcHashMd5(path + fmt.Sprintf("%c", os.PathSeparator) + f.Name())
+			hSha1 := CalcHashSha1(path + fmt.Sprintf("%c", os.PathSeparator) + f.Name())
 
-			fh, _ := os.Open(path + fmt.Sprintf("%c", os.PathSeparator) + f.Name())
-			defer fh.Close()
-			hMd5 := CalcHashMd5(fh)
-			hSha1 := CalcHashSha1(fh)
-			fmt.Printf("%x", hMd5)
-			fmt.Println()
-			fmt.Printf("%x", hSha1)
-			fmt.Println()
-			fmt.Println()
+			var fMeta = new(File)
+			fMeta.Filename = f.Name()
+			fMeta.HashMd5 = hMd5
+			fMeta.HashSha1 = hSha1
+			fileHashes = append(fileHashes, fMeta)
 		}
 	}
+
+	return fileHashes
 }
