@@ -50,7 +50,7 @@ func main() {
 
 	for _, file := range files {
 
-		fileInfoDb := modules.CheckHash2(db, fmt.Sprintf("%x", file.HashSha256))
+		fileInfoDb := modules.CheckHash(db, fmt.Sprintf("%x", file.HashSha256))
 
 		if fileInfoDb.Id == 0 {
 			// hash not found in local database, retrieve it from virustotal

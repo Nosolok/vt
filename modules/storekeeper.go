@@ -38,27 +38,7 @@ func InitDatabase(db *sql.DB) {
 /*
 	check hash in database
 */
-func CheckHash(db *sql.DB, hash string) string {
-	stmt, err := db.Prepare(`
-		select *
-		from file_checks
-		where sha256 = ?
-	`)
-	if err != nil {
-		fmt.Println("%q: %s\n", err, stmt)
-	}
-	defer stmt.Close()
-
-	_, err = db.Exec(hash)
-
-	if err != nil {
-		fmt.Println("%q: %s\n", err, stmt)
-	}
-
-	return ""
-}
-
-func CheckHash2(db *sql.DB, hash string) FileInfo {
+func CheckHash(db *sql.DB, hash string) FileInfo {
 	stmt := `
 		select *
 		from file_checks
