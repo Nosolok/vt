@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-type fileReportResponse struct {
+type FileReportResponse struct {
 	ResponseCode int    `json:"response_code"`
 	VerboseMsg   string `json:"verbose_msg"`
 	Resource     string `json:"resource"`
@@ -35,7 +35,7 @@ const apiFileReport string = apiUrl + apiVersion + "file/report"
 
 // FileReport get report about already scanned files
 // Return report about file
-func FileReport(hash string, key string) fileReportResponse {
+func FileReport(hash string, key string) FileReportResponse {
 	var response *http.Response
 	var err error
 
@@ -44,10 +44,10 @@ func FileReport(hash string, key string) fileReportResponse {
 			apiFileReport,
 			url.Values{"apikey": {key}, "resource": {hash}},
 		)
-		defer response.Body.Close()
 		if err != nil {
-			log.Fatal("error PostForm")
+			log.Fatal("error PostForm", err)
 		}
+		defer response.Body.Close()
 
 		if response.StatusCode == 200 {
 			done = true
@@ -61,11 +61,12 @@ func FileReport(hash string, key string) fileReportResponse {
 		log.Fatal("error ReadAll")
 	}
 
-	var report fileReportResponse
+	var report FileReportResponse
 	errJson := json.Unmarshal(body, &report)
 	if errJson != nil {
 		log.Println(errJson)
 	}
 
 	return report
+
 }
