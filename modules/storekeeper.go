@@ -80,7 +80,6 @@ func StoreCheck(db *sql.DB, report vtApi.FileReportResponse) {
 		fmt.Println("%q: %s\n", err, stmt)
 	}
 	if result != nil {
-		fmt.Println(result)
 	}
 
 	tx.Commit()
