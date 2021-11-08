@@ -41,6 +41,7 @@ func main() {
 	var files = modules.Find(path)
 
 	fmt.Println(
+		"source", " | ",
 		"flename", " | ",
 		"sha256", " | ",
 		"scan date", " | ",
@@ -68,6 +69,7 @@ func main() {
 				// item was indeed present and it could be retrieved
 				modules.StoreCheck(db, vtReport)
 				fmt.Println(
+					"vt", " | ",
 					file.Filename, " | ",
 					vtReport.Sha256, " | ",
 					vtReport.ScanDate, " | ",
@@ -85,6 +87,7 @@ func main() {
 			// hash found in local database, output cached information
 
 			fmt.Println(
+				"db", " | ",
 				file.Filename, " | ",
 				fileInfoDb.Sha256, " | ",
 				fileInfoDb.Scan_date, " | ",
