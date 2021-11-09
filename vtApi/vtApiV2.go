@@ -38,6 +38,7 @@ const apiFileReport string = apiUrl + apiVersion + "file/report"
 func FileReport(hash string, key string) FileReportResponse {
 	var response *http.Response
 	var err error
+	var isApiLimitExceeded bool = false
 
 	for done := false; !done; {
 		response, err = http.PostForm(
@@ -49,10 +50,22 @@ func FileReport(hash string, key string) FileReportResponse {
 		}
 		defer response.Body.Close()
 
-		if response.StatusCode == 200 {
+		switch response.StatusCode {
+		case 200:
+			// normal response
+			isApiLimitExceeded = false
 			done = true
-		} else {
-			time.Sleep(60)
+		case 204:
+			// reponse when API quota limit exceeded. Maybe limitation by minutes
+			// so if isApiLimitExceeded appear twice it means daily limit is used up
+			if isApiLimitExceeded {
+				log.Fatal("API limit exceeded")
+			}
+
+			isApiLimitExceeded = true
+			time.Sleep(60 * time.Second)
+		default:
+			log.Println("default switch")
 		}
 	}
 
