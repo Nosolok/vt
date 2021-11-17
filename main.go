@@ -59,12 +59,27 @@ func main() {
 			vtReport := vtApi.FileReport(fmt.Sprintf("%x", file.HashSha1), api)
 
 			switch vtReport.ResponseCode {
+			case -2:
+				// If the requested item is still queued for analysis
+				fmt.Println(
+					file.Filename, " | ",
+					"File in in queue for analysis",
+				)
 			case 0:
 				// the item you searched for was not present in VirusTotal's dataset
 				fmt.Println(
 					file.Filename, " | ",
 					"File is not scanned yet",
 				)
+
+				f, err := os.Open(path + fmt.Sprintf("%c", os.PathSeparator) + file.Filename)
+				if err != nil {
+					log.Fatal("error open file", err)
+				}
+				defer f.Close()
+
+				var fullFilename = path + fmt.Sprintf("%c", os.PathSeparator) + file.Filename
+				vtApi.UploadFile(f, fullFilename, api)
 			case 1:
 				// item was indeed present and it could be retrieved
 				modules.StoreCheck(db, vtReport)
