@@ -12,6 +12,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const maxFileSize = 1024 * 1024 * 32
+
 func main() {
 	var args = os.Args
 	var path string
@@ -79,7 +81,18 @@ func main() {
 				defer f.Close()
 
 				var fullFilename = path + fmt.Sprintf("%c", os.PathSeparator) + file.Filename
-				vtApi.UploadFile(f, fullFilename, api)
+
+				fileInfo, err := f.Stat()
+				// fmt.Println(fileInfo.Size())
+
+				if fileInfo.Size() > maxFileSize {
+					fmt.Println("big file")
+					// vtApi.UploadBigFile(f, fullFilename, api)
+				} else {
+					fmt.Println("small file")
+					vtApi.UploadFile(vtApi.Api3FileUpload, f, fullFilename, api)
+				}
+
 			case 1:
 				// item was indeed present and it could be retrieved
 				modules.StoreCheck(db, vtReport)
