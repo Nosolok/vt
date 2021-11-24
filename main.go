@@ -102,7 +102,7 @@ func main() {
 					vtReport.Sha256, " | ",
 					vtReport.ScanDate, " | ",
 					vtReport.Positives, " | ",
-					fileInfoDb.Total,
+					vtReport.Total,
 				)
 			default:
 				fmt.Println(
